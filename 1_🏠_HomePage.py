@@ -21,6 +21,7 @@ def criarDash():
         "📊 Com o nosso exclusivo Dashboard, você poderá acompanhar todas as informações essenciais sobre as suas lojas e produtos. Com estatísticas atualizadas em tempo real, monitorar o desempenho de vendas nunca foi tão intuitivo e eficiente. 📈\n\n"
         "Nossos gráficos interativos fornecem uma visão abrangente das vendas diárias, semanais e mensais, ajudando você a identificar tendências e oportunidades de crescimento.\n\n"
         "💻🚀 O Dashboard da Madamy Acessórios foi desenvolvido com a mais alta tecnologia para oferecer uma experiência de usuário excepcional. Com uma interface amigável e responsiva, você pode acessar os dados da sua loja de qualquer lugar, a qualquer momento. Basta alguns cliques para desbloquear insights valiosos e tomar decisões estratégicas embasadas em dados concretos!"
+        "Para ter acesso a mais paginas acesse a seta > no canto superior dessa página"
     )
 
 
