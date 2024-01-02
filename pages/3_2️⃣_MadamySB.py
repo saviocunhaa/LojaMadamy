@@ -302,7 +302,7 @@ def plot_vendas_por_forma_pagamento(dfCaixaItens, dfFormaPagamento, year, month)
 
 
 def criarDash():
-   st.header("🎉 Bem-vindo ao Dashboard da Madamy Acessórios São Benedito! 🛍️")
+    st.header("🎉 Bem-vindo ao Dashboard da Madamy Acessórios São Benedito! 🛍️")
     st.markdown("---")
 
     ################### CRIAR COLUNAS DE MES E ANO DE ALGUNS DATAFRAME #######################
