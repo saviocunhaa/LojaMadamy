@@ -16,7 +16,7 @@ def criarDash():
     st.markdown("---")
 
     st.markdown(
-        "🎉🛍️ Bem-vindo(a) à Madamy Acessórios 2024! 🛍️🎉\n\n"
+        "🎉🛍️ Bem-vindo(a) à Madamy Acessórios! 🛍️🎉\n\n"
         "Aqui na Madamy, sabemos que os acessórios certos podem transformar um visual comum em algo verdadeiramente extraordinário! ✨\n\n"
         "📊 Com o nosso exclusivo Dashboard, você poderá acompanhar todas as informações essenciais sobre as suas lojas e produtos. Com estatísticas atualizadas em tempo real, monitorar o desempenho de vendas nunca foi tão intuitivo e eficiente. 📈\n\n"
         "Nossos gráficos interativos fornecem uma visão abrangente das vendas diárias, semanais e mensais, ajudando você a identificar tendências e oportunidades de crescimento.\n\n"
