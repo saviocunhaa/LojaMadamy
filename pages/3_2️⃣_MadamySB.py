@@ -1,5 +1,5 @@
 import os
-
+from datetime import date
 import mysql.connector
 import openai
 import pandas as pd
