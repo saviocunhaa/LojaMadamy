@@ -320,24 +320,6 @@ def criarDash():
     if data_inicio > data_final:
         st.sidebar.error("Erro: Data de início deve ser anterior à data final.")
 
-
-    valores_unicos_year = dfCaixaItens["Year"].unique()
-    default_values_year = list(valores_unicos_year)
-    year = st.sidebar.multiselect(
-        key=1,
-        label="Ano",
-        options=dfCaixaItens["Year"].unique(),
-        default=default_values_year,
-    )
-
-    valores_unicos_moth = dfCaixaItens["Month"].unique()
-    default_values_moth = list(valores_unicos_moth)
-    month = st.sidebar.multiselect(
-        key=2,
-        label="Mês",
-        options=dfCaixaItens["Month"].unique(),
-        default=default_values_moth,
-    )
     
     # Join entre dfComandas e dfColaboradores
     dfComandasComNomes = dfComandas.merge(dfColaboradores, left_on='colaborador_id', right_on='id', how='left')
