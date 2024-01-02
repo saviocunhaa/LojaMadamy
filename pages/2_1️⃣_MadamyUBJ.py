@@ -196,84 +196,38 @@ def plot_hist_vendas_por_dia_semana(dfCaixaItens, year, month):
         (dfCaixaItens["Year"].isin(year)) & (dfCaixaItens["Month"].isin(month))
     ]
 
-    # Criar uma nova coluna "DiaSemana" com base na coluna "created_at"
-    df_filtrado["DiaSemana"] = df_filtrado["created_at"].apply(lambda x: x.weekday())
+    # Verificar se o DataFrame está vazio
+    if df_filtrado.empty:
+        return "Não há dados de vendas para o período selecionado."
 
-    # Mapear o número do dia da semana para o nome do dia
-    dias_semana = [
-        "Segunda",
-        "Terça",
-        "Quarta",
-        "Quinta",
-        "Sexta",
-        "Sábado",
-        "Domingo",
-    ]
-    df_filtrado["DiaSemana"] = df_filtrado["DiaSemana"].map(lambda x: dias_semana[x])
+    # Converter a coluna 'created_at' para datetime se não estiver nesse formato
+    if not pd.api.types.is_datetime64_any_dtype(df_filtrado['created_at']):
+        df_filtrado['created_at'] = pd.to_datetime(df_filtrado['created_at'])
+
+    # Criar uma nova coluna "DiaSemana" com base na coluna "created_at"
+    df_filtrado["DiaSemana"] = df_filtrado["created_at"].dt.weekday()
+    dias_semana = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"]
+    df_filtrado["DiaSemana"] = df_filtrado["DiaSemana"].apply(lambda x: dias_semana[x])
 
     # Agrupar por "DiaSemana" e contar as vendas
-    vendas_por_dia = (
-        df_filtrado[df_filtrado["descricao"] == "venda"].groupby("DiaSemana").size()
-    )
+    vendas_por_dia = df_filtrado[df_filtrado["descricao"] == "venda"].groupby("DiaSemana").size()
 
     # Criar o gráfico de barras
     fig = px.bar(
         vendas_por_dia,
         x=vendas_por_dia.index,
         y=vendas_por_dia.values,
-        labels={"x": "Dia da Semana", "y": "Quantidade de Vendas"},
+        labels={"x": "Dia da Semana", "y": "Quantidade de Vendas"}
     )
 
     # Personalizar o layout do gráfico
     fig.update_layout(
         title="Histórico de Vendas por Dia da Semana",
         xaxis_tickmode="linear",
-        yaxis=dict(title="Quantidade de Vendas"),
+        yaxis=dict(title="Quantidade de Vendas")
     )
 
-    # Exibir o gráfico# Filtrar o DataFrame dfCaixaItens com base nas opções selecionadas na sidebar
-    df_filtrado = dfCaixaItens[
-        (dfCaixaItens["Year"].isin(year)) & (dfCaixaItens["Month"].isin(month))
-    ]
-
-    # Criar uma nova coluna "DiaSemana" com base na coluna "created_at"
-    df_filtrado["DiaSemana"] = df_filtrado["created_at"].apply(lambda x: x.weekday())
-
-    # Mapear o número do dia da semana para o nome do dia
-    dias_semana = [
-        "Segunda",
-        "Terça",
-        "Quarta",
-        "Quinta",
-        "Sexta",
-        "Sábado",
-        "Domingo",
-    ]
-    df_filtrado["DiaSemana"] = df_filtrado["DiaSemana"].map(lambda x: dias_semana[x])
-
-    # Agrupar por "DiaSemana" e contar as vendas
-    vendas_por_dia = (
-        df_filtrado[df_filtrado["descricao"] == "venda"].groupby("DiaSemana").size()
-    )
-
-    # Criar o gráfico de barras
-    fig = px.bar(
-        vendas_por_dia,
-        x=vendas_por_dia.index,
-        y=vendas_por_dia.values,
-        labels={"x": "Dia da Semana", "y": "Quantidade de Vendas"},
-    )
-
-    # Personalizar o layout do gráfico
-    fig.update_layout(
-        title="Histórico de Vendas por Dia da Semana",
-        xaxis_tickmode="linear",
-        yaxis=dict(title="Quantidade de Vendas"),
-    )
-
-    # Exibir o gráfico
     return fig
-
 
 def plot_vendas_por_forma_pagamento(dfCaixaItens, dfFormaPagamento, year, month):
     # Filtrar o DataFrame dfCaixaItens com base nos valores de year e month
