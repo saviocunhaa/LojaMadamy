@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\Sávio Cunha\Documents\GitHub\MADAMY\venv"
+VIRTUAL_ENV="D:\BACKUP\GitHub\MADAMY\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

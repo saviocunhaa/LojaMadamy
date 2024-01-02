@@ -93,6 +93,9 @@ def plot_total_vendas_por_mes(dfCaixaItens, year):
     # Agrupar as vendas por mês e calcular o valor total de vendas
     vendas_por_mes = df_filtrado.groupby("Month")["valor"].sum()
 
+    # vendas_por_mes = df_filtrado[df_filtrado["descricao"] == "venda"]["valor"].sum()
+
+    # vendas_por_mes = f"R$ {vendas_por_mes:,.2f}".replace(",", ".")
     # Gráfico de linhas com o total de vendas por mês
     fig = go.Figure(
         data=[go.Scatter(x=vendas_por_mes.index, y=vendas_por_mes.values, mode="lines")]
