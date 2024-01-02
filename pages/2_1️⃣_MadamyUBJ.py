@@ -1,11 +1,9 @@
 import os
-
 import mysql.connector
 import openai
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import streamlit as st
 import streamlit as st
 from datetime import date
 
