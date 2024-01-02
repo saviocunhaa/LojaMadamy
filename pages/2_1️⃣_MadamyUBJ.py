@@ -320,7 +320,10 @@ def criarDash():
     if data_inicio > data_final:
         st.sidebar.error("Erro: Data de início deve ser anterior à data final.")
 
-    
+    year = pd.date_range(data_inicio, data_final, freq='YS').year.tolist()
+    month = pd.date_range(data_inicio, data_final, freq='MS').month.tolist()
+
+
     # Join entre dfComandas e dfColaboradores
     dfComandasComNomes = dfComandas.merge(dfColaboradores, left_on='colaborador_id', right_on='id', how='left')
 
