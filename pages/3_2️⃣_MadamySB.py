@@ -311,23 +311,17 @@ def criarDash():
 
     ##################  SIDEBAR   ######################################################
 
-    valores_unicos_year = dfCaixaItens["Year"].unique()
-    default_values_year = list(valores_unicos_year)
-    year = st.sidebar.multiselect(
-        key=1,
-        label="Ano",
-        options=dfCaixaItens["Year"].unique(),
-        default=default_values_year,
-    )
+    # Adicionar seletores de intervalo de datas na barra lateral
+    st.sidebar.header("Selecione o Intervalo de Datas")
+    data_inicio = st.sidebar.date_input("Data Início", date(2021, 1, 1))
+    data_final = st.sidebar.date_input("Data Final", date.today())
 
-    valores_unicos_moth = dfCaixaItens["Month"].unique()
-    default_values_moth = list(valores_unicos_moth)
-    month = st.sidebar.multiselect(
-        key=2,
-        label="Mês",
-        options=dfCaixaItens["Month"].unique(),
-        default=default_values_moth,
-    )
+    # Verificar se a data de início é anterior à data final
+    if data_inicio > data_final:
+        st.sidebar.error("Erro: Data de início deve ser anterior à data final.")
+
+    year = pd.date_range(data_inicio, data_final, freq='YS').year.tolist()
+    month = pd.date_range(data_inicio, data_final, freq='MS').month.tolist()
 
     
     # Join entre dfComandas e dfColaboradores
@@ -343,8 +337,9 @@ def criarDash():
     #####################  TELA PRINCIPAL ###########################
 
     # Filtrar o DataFrame dfCaixaItens com base nas opções selecionadas na sidebar
+    # Filtrar o DataFrame dfCaixaItens com base no intervalo de datas
     df_filtrado = dfCaixaItens[
-        (dfCaixaItens["Year"].isin(year)) & (dfCaixaItens["Month"].isin(month))
+        (dfCaixaItens["created_at"].dt.date >= data_inicio) & (dfCaixaItens["created_at"].dt.date <= data_final)
     ]
     # 1 - Quantidade de dfCaixaItens["descricao"] == "venda"
     quantidade_vendas = len(df_filtrado[df_filtrado["descricao"] == "venda"])
