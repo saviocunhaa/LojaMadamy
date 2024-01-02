@@ -86,16 +86,23 @@ def conexãoSB():
     )
 
 
-def plot_total_vendas_por_mes(dfCaixaItens, year):
+def plot_total_vendas_por_mes(dfCaixaItens, dfComandas, dfColaboradores, year, vendedores_selecionados):
     # Filtrar o DataFrame com base no ano selecionado
     df_filtrado = dfCaixaItens[dfCaixaItens["Year"].isin(year)]
 
+    if vendedores_selecionados:
+        # Obter IDs dos vendedores selecionados
+        ids_vendedores_selecionados = dfColaboradores[dfColaboradores['nome'].isin(vendedores_selecionados)]['id'].tolist()
+
+        # Filtrar comandas com base nos IDs dos vendedores
+        df_filtrado = df_filtrado[df_filtrado['comanda_id'].isin(dfComandas[dfComandas['colaborador_id'].isin(ids_vendedores_selecionados)]['id'])]
+
+
     # Agrupar as vendas por mês e calcular o valor total de vendas
     vendas_por_mes = df_filtrado.groupby("Month")["valor"].sum()
-
-    # vendas_por_mes = df_filtrado[df_filtrado["descricao"] == "venda"]["valor"].sum()
-
-    # vendas_por_mes = f"R$ {vendas_por_mes:,.2f}".replace(",", ".")
+    
+    
+   
     # Gráfico de linhas com o total de vendas por mês
     fig = go.Figure(
         data=[go.Scatter(x=vendas_por_mes.index, y=vendas_por_mes.values, mode="lines")]
@@ -108,6 +115,8 @@ def plot_total_vendas_por_mes(dfCaixaItens, year):
     )
 
     return fig
+
+
 
 
 def plot_total_vendas_por_Ano(dfCaixaItens, year):
@@ -320,6 +329,17 @@ def criarDash():
         default=default_values_moth,
     )
 
+    
+    # Join entre dfComandas e dfColaboradores
+    dfComandasComNomes = dfComandas.merge(dfColaboradores, left_on='colaborador_id', right_on='id', how='left')
+
+    # Substitua 'nome_colaborador' pela coluna correta que representa os nomes dos vendedores em dfColaboradores
+    vendedores_unicos = dfComandasComNomes['nome'].unique()
+    vendedores_selecionados = st.sidebar.multiselect(
+        key=3,
+        label="Vendedores",
+        options=vendedores_unicos
+    )
     #####################  TELA PRINCIPAL ###########################
 
     # Filtrar o DataFrame dfCaixaItens com base nas opções selecionadas na sidebar
@@ -399,7 +419,7 @@ def criarDash():
         st.plotly_chart(fig_vendas_por_forma_pagamento)
 
     with col1_:
-        fig_total_vendas = plot_total_vendas_por_mes(dfCaixaItens, year)
+        fig_total_vendas = plot_total_vendas_por_mes(dfCaixaItens, dfComandas, dfColaboradores, year, vendedores_selecionados)
         st.plotly_chart(fig_total_vendas)
 
     with col2_:
