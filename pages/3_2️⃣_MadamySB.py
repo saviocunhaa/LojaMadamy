@@ -302,7 +302,7 @@ def plot_vendas_por_forma_pagamento(dfCaixaItens, dfFormaPagamento, year, month)
 
 
 def criarDash():
-    st.header("🎉 Bem-vindo ao Dashboard da Madamy Acessórios São Benedito! 🛍️")
+   st.header("🎉 Bem-vindo ao Dashboard da Madamy Acessórios São Benedito! 🛍️")
     st.markdown("---")
 
     ################### CRIAR COLUNAS DE MES E ANO DE ALGUNS DATAFRAME #######################
@@ -323,7 +323,7 @@ def criarDash():
     year = pd.date_range(data_inicio, data_final, freq='YS').year.tolist()
     month = pd.date_range(data_inicio, data_final, freq='MS').month.tolist()
 
-    
+
     # Join entre dfComandas e dfColaboradores
     dfComandasComNomes = dfComandas.merge(dfColaboradores, left_on='colaborador_id', right_on='id', how='left')
 
@@ -334,6 +334,7 @@ def criarDash():
         label="Vendedores",
         options=vendedores_unicos
     )
+
     #####################  TELA PRINCIPAL ###########################
 
     # Filtrar o DataFrame dfCaixaItens com base nas opções selecionadas na sidebar
