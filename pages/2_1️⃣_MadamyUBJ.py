@@ -1,11 +1,11 @@
 import os
+
 import mysql.connector
 import openai
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
-from datetime import date
 
 st.set_page_config(
     page_title="Dash Madamy Ubajara",
@@ -196,38 +196,84 @@ def plot_hist_vendas_por_dia_semana(dfCaixaItens, year, month):
         (dfCaixaItens["Year"].isin(year)) & (dfCaixaItens["Month"].isin(month))
     ]
 
-    # Verificar se o DataFrame está vazio
-    if df_filtrado.empty:
-        return "Não há dados de vendas para o período selecionado."
-
-    # Converter a coluna 'created_at' para datetime se não estiver nesse formato
-    if not pd.api.types.is_datetime64_any_dtype(df_filtrado['created_at']):
-        df_filtrado['created_at'] = pd.to_datetime(df_filtrado['created_at'])
-
     # Criar uma nova coluna "DiaSemana" com base na coluna "created_at"
-    df_filtrado["DiaSemana"] = df_filtrado["created_at"].dt.weekday()
-    dias_semana = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"]
-    df_filtrado["DiaSemana"] = df_filtrado["DiaSemana"].apply(lambda x: dias_semana[x])
+    df_filtrado["DiaSemana"] = df_filtrado["created_at"].apply(lambda x: x.weekday())
+
+    # Mapear o número do dia da semana para o nome do dia
+    dias_semana = [
+        "Segunda",
+        "Terça",
+        "Quarta",
+        "Quinta",
+        "Sexta",
+        "Sábado",
+        "Domingo",
+    ]
+    df_filtrado["DiaSemana"] = df_filtrado["DiaSemana"].map(lambda x: dias_semana[x])
 
     # Agrupar por "DiaSemana" e contar as vendas
-    vendas_por_dia = df_filtrado[df_filtrado["descricao"] == "venda"].groupby("DiaSemana").size()
+    vendas_por_dia = (
+        df_filtrado[df_filtrado["descricao"] == "venda"].groupby("DiaSemana").size()
+    )
 
     # Criar o gráfico de barras
     fig = px.bar(
         vendas_por_dia,
         x=vendas_por_dia.index,
         y=vendas_por_dia.values,
-        labels={"x": "Dia da Semana", "y": "Quantidade de Vendas"}
+        labels={"x": "Dia da Semana", "y": "Quantidade de Vendas"},
     )
 
     # Personalizar o layout do gráfico
     fig.update_layout(
         title="Histórico de Vendas por Dia da Semana",
         xaxis_tickmode="linear",
-        yaxis=dict(title="Quantidade de Vendas")
+        yaxis=dict(title="Quantidade de Vendas"),
     )
 
+    # Exibir o gráfico# Filtrar o DataFrame dfCaixaItens com base nas opções selecionadas na sidebar
+    df_filtrado = dfCaixaItens[
+        (dfCaixaItens["Year"].isin(year)) & (dfCaixaItens["Month"].isin(month))
+    ]
+
+    # Criar uma nova coluna "DiaSemana" com base na coluna "created_at"
+    df_filtrado["DiaSemana"] = df_filtrado["created_at"].apply(lambda x: x.weekday())
+
+    # Mapear o número do dia da semana para o nome do dia
+    dias_semana = [
+        "Segunda",
+        "Terça",
+        "Quarta",
+        "Quinta",
+        "Sexta",
+        "Sábado",
+        "Domingo",
+    ]
+    df_filtrado["DiaSemana"] = df_filtrado["DiaSemana"].map(lambda x: dias_semana[x])
+
+    # Agrupar por "DiaSemana" e contar as vendas
+    vendas_por_dia = (
+        df_filtrado[df_filtrado["descricao"] == "venda"].groupby("DiaSemana").size()
+    )
+
+    # Criar o gráfico de barras
+    fig = px.bar(
+        vendas_por_dia,
+        x=vendas_por_dia.index,
+        y=vendas_por_dia.values,
+        labels={"x": "Dia da Semana", "y": "Quantidade de Vendas"},
+    )
+
+    # Personalizar o layout do gráfico
+    fig.update_layout(
+        title="Histórico de Vendas por Dia da Semana",
+        xaxis_tickmode="linear",
+        yaxis=dict(title="Quantidade de Vendas"),
+    )
+
+    # Exibir o gráfico
     return fig
+
 
 def plot_vendas_por_forma_pagamento(dfCaixaItens, dfFormaPagamento, year, month):
     # Filtrar o DataFrame dfCaixaItens com base nos valores de year e month
@@ -263,19 +309,24 @@ def criarDash():
 
     ##################  SIDEBAR   ######################################################
 
-    # Adicionar seletores de intervalo de datas na barra lateral
-    st.sidebar.header("Selecione o Intervalo de Datas")
-    data_inicio = st.sidebar.date_input("Data Início", date(2021, 1, 1))
-    data_final = st.sidebar.date_input("Data Final", date.today())
+    valores_unicos_year = dfCaixaItens["Year"].unique()
+    default_values_year = list(valores_unicos_year)
+    year = st.sidebar.multiselect(
+        key=1,
+        label="Ano",
+        options=dfCaixaItens["Year"].unique(),
+        default=default_values_year,
+    )
 
-    # Verificar se a data de início é anterior à data final
-    if data_inicio > data_final:
-        st.sidebar.error("Erro: Data de início deve ser anterior à data final.")
-
-    year = pd.date_range(data_inicio, data_final, freq='YS').year.tolist()
-    month = pd.date_range(data_inicio, data_final, freq='MS').month.tolist()
-
-
+    valores_unicos_moth = dfCaixaItens["Month"].unique()
+    default_values_moth = list(valores_unicos_moth)
+    month = st.sidebar.multiselect(
+        key=2,
+        label="Mês",
+        options=dfCaixaItens["Month"].unique(),
+        default=default_values_moth,
+    )
+    
     # Join entre dfComandas e dfColaboradores
     dfComandasComNomes = dfComandas.merge(dfColaboradores, left_on='colaborador_id', right_on='id', how='left')
 
@@ -290,9 +341,8 @@ def criarDash():
     #####################  TELA PRINCIPAL ###########################
 
     # Filtrar o DataFrame dfCaixaItens com base nas opções selecionadas na sidebar
-    # Filtrar o DataFrame dfCaixaItens com base no intervalo de datas
     df_filtrado = dfCaixaItens[
-        (dfCaixaItens["created_at"].dt.date >= data_inicio) & (dfCaixaItens["created_at"].dt.date <= data_final)
+        (dfCaixaItens["Year"].isin(year)) & (dfCaixaItens["Month"].isin(month))
     ]
     # 1 - Quantidade de dfCaixaItens["descricao"] == "venda"
     quantidade_vendas = len(df_filtrado[df_filtrado["descricao"] == "venda"])
@@ -388,7 +438,7 @@ def criarDash():
 
     openai.api_key = os.getenv("OPENAI_API_KEY")
     chatgpt = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model="gpt-3.5-turabo",
         messages=[
             {
                 "role": "system",
