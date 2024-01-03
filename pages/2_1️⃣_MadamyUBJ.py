@@ -438,7 +438,7 @@ def criarDash():
 
     openai.api_key = os.getenv("OPENAI_API_KEY")
     chatgpt = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model="gpt-3.5-turabo",
         messages=[
             {
                 "role": "system",
